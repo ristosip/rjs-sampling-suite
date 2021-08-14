@@ -1,4 +1,4 @@
--- This script is a part of 'Sampling Suite' designed to automate tasks related to sample instrument creation.
+-- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script detects segments of audio that have audible content and chops the source item accordingly.
 --
 -- How to use: 
