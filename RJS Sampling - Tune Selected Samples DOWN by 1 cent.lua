@@ -1,4 +1,4 @@
--- This script is a part of 'Sampling Suite' designed to automate tasks related to sample instrument creation.
+-- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script changes the pitch of the selected samples by 1 cent.
 -- author: Risto Sipola
 
