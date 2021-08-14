@@ -1,4 +1,4 @@
--- This script is a part of 'Sampling Suite' designed to automate tasks related to sample instrument creation.
+-- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script adjusts the ending point of the sample.
 -- 'Chop Samples' script should be run before running this script as it links the samples and the cut out pieces that this script adjusts.
 -- The script always adjusts the sample, meaning 'tail length' refers to the 'tail length' of the sample, not the cut out piece!
