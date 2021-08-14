@@ -1,4 +1,4 @@
-# sampling-suite
+# rjs-sampling-suite
 A collection of (Lua) scripts for Reaper that automate tasks related to sample instrument creation.
 
 The tasks include chopping, labelling and arranging samples for export. 
