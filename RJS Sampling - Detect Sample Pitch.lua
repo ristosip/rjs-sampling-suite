@@ -1,4 +1,4 @@
--- This script is a part of 'Sampling Suite' designed to automate tasks related to sample instrument creation.
+-- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script detects the pitches (closest musical note) of the samples and labels the samples accordingly. In addition, the script creates a tuning aid track (See details below).
 --
 -- How to use: 
