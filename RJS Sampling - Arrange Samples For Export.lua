@@ -1,4 +1,4 @@
--- This script is a part of 'Sampling Suite' designed to automate tasks related to sample instrument creation.
+-- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script creates tracks and regions and moves the samples on the new tracks. The regions and tracks are named so that the rendered samples can easily be automapped in Kontakt. Utilize Reaper's file naming "wildcards" when rendering! (See details below.)
 --
 -- How to use: 
