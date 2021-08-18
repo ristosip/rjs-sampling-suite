@@ -1,13 +1,13 @@
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
--- Running the script labels the samples based on timeline markers that indicate midi note values.
+-- Running the script labels the samples based on timeline markers that indicate midi note numbers.
 --
 -- How to use: 
 --             1. Place the samples on the first track of the project. Ideally you have run the 'Chop Samples' script and are ready to go.
---             2. Create timeline markers to indicate the desired midi note value. (See details below.)
+--             2. Create timeline markers to indicate the desired midi note number. (See details below.)
 --             3. Run the script.
 --
 -- Timeline markers:
---             'perc [midi note value]'
+--             'asg [midi note number]'                      ( Old version which works as well:  'perc [midi note number]' )
 --
 --              Every sample appearing after a marker will be labeled accordingly.
 --              Create a new marker each time you want to change the labeling.
@@ -15,7 +15,7 @@
 --
 --  Timeline--> |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
 --                 ||                                      ||                                         || 
---                 Marker 1: 'perc 36'                     Marker 2: 'perc 38'                        Marker 3: 'perc 42'
+--                 Marker 1: 'asg 36'                      Marker 2: 'asg 38'                         Marker 3: 'asg 42'
 --
 --                    [Sample 1]  [Sample 2]   [Sample 3]      [Sample 4]  [Sample 5]  [Sample 6]           [Sample 7]    [Sample 8]
 -- 
@@ -43,7 +43,7 @@ function update_group_member_items(item, note)
 	end	
 end
 
-function assign_percussion_keys(item, note)
+function assign_midi_note_number(item, note)
 	-- colors the item based on the midi note number, that is the output of this script: R component has the pure note number, others are manipulated for artistic effect
 	reaper.SetMediaItemInfo_Value(item, "I_CUSTOMCOLOR", reaper.ColorToNative(note, math.abs(math.floor((255 - (note%12)/12 * 255))),math.floor((note%12)/12 * 255/2))|0x1000000)
 	reaper.UpdateArrange()
@@ -64,7 +64,7 @@ function main()
 				local identifier_found = false
 				if pos < item_pos then
 					for word in string.gmatch(name, "%a+") do 
-						if word == "perc" then
+						if word == "perc" or word == "asg" then
 							identifier_found = true
 							break;
 						end
@@ -85,7 +85,7 @@ function main()
 					end
 				end
 			end			
-			assign_percussion_keys(item, midi_note)	
+			assign_midi_note_number(item, midi_note)	
 		end
 	end
 end
