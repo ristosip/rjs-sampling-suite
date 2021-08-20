@@ -72,7 +72,7 @@ function get_audio_buffer(take, start_time_sec, length_sec)
 		if numchannels == 2 then
 			for j = 1, bufferSize, 2 do
 				monoBufferSize = monoBufferSize + 1
-				monoBuffer[monoBufferSize] = temp_buffer[j] + temp_buffer[j + 1]
+				monoBuffer[monoBufferSize] = temp_buffer[j]-- + temp_buffer[j + 1]
 			end
 		else
 			monoBuffer = temp_buffer
