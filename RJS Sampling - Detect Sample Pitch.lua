@@ -168,7 +168,7 @@ function main()
 		track_count = reaper.CountTracks(0)
 		reaper.GetSetMediaTrackInfo_String(tuning_aid_track, 'P_NAME', "Tuning Aid", true)	
 		reaper.TrackFX_AddByName(tuning_aid_track, "ReaSynth", false, -1)
-		reaper.TrackFX_SetParam(tuning_aid_track, 0, 2, .7)
+		reaper.TrackFX_SetParam(tuning_aid_track, 0, 3, .55) -- change these numbers to change the synth sound
 		reaper.SetMediaTrackInfo_Value(tuning_aid_track, "D_VOL", 0.25)
 	
 		for i = 0, itemCount - 1, 1 do
