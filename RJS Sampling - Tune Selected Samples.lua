@@ -4,7 +4,7 @@
 -- To change tuning mode (pitch/playrate) or the measurement window settings use a project marker as an input command.     
 -- To change the default settings, change the code lines below.
 --
--- Input command:       'tune   [tuning mode: pitch/rate]   [measurement window start time (milliseconds)]    [measurement window (max) length (ms)]    [measurement stop point (max percentage of the sample length)] 
+-- Input command:       'tune   [tuning mode: pitch/rate]   [measurement window start time (milliseconds)]    [measurement window (max) length (ms)]    [measurement stop point (max percentage of the sample length)]' 
 --
 --
 -- author: Risto Sipola
