@@ -10,8 +10,17 @@ rate = 1 -- number codes of the modes
 pitch = 2 -- do not change
 
 --------------------------------------------------------------------------------------------------------
+------------------------ change these to change the default behavior -----------------------------------
 --------------------------------------------------------------------------------------------------------
+
 default_tune_mode = rate -- change this to change the default behavior of the script. 'rate' or 'pitch'.
+
+default_measurement_window_start_time_ms = 400 -- the measurement should start once the note pitch has settled.
+
+default_measurement_window_length_ms = 3000 -- this can be longer than the actual sample lengths. The number will be scaled down for each sample if needed.
+
+default_measurement_end_max_percentage_of_sample_length = 70 -- 70 = 70 percent. This means that the measurement will stop if the point of [0.7 * sample length] is reached.
+--------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 
@@ -141,16 +150,16 @@ function calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measu
 	end
 end
 
-function tune_sample(item, tune_mode)
+function tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas_max_percent)
 
 	local take = reaper.GetTake(item, 0)
 	local item_length = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
-	local start_time_sec = 0.800
-	local snippet_length = 4.000
+	local start_time_sec = meas_win_start_time
+	local snippet_length = meas_win_length
 	local measuring_interval_sec = 0.010
 	
 	while snippet_length > 0.060 do
-		if 0.7 * item_length < start_time_sec + snippet_length then
+		if meas_max_percent * item_length < start_time_sec + snippet_length then
 			start_time_sec = start_time_sec * 0.9
 			snippet_length = snippet_length * 0.9 
 		else
@@ -203,6 +212,11 @@ function main()
 
 	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
 	local tune_mode = default_tune_mode
+	local meas_win_start_time = default_measurement_window_start_time_ms / 1000
+	local meas_win_length = default_measurement_window_length_ms / 1000
+	local meas_max_percent = default_measurement_end_max_percentage_of_sample_length / 100
+	local input_parameters = {}
+	local par_indx = 0
 
 	for j = num_markers - 1, 0, -1 do
 		local retval, isrgn, pos, rgnend, name, markrgnindexnumber = reaper.EnumProjectMarkers(j)
@@ -215,15 +229,28 @@ function main()
 		end
 		if identifier_found then
 			for word in string.gmatch(name, "%a+") do 
-			if word == "rate" then
-				tune_mode = rate
-				break;
+				if word == "rate" then
+					tune_mode = rate
+					break;
+				end
+				if word == "pitch" then
+					tune_mode = pitch
+					break;
+				end
 			end
-			if word == "pitch" then
-				tune_mode = pitch
-				break;
+			for word in string.gmatch(name, "%d+") do 
+				par_indx = par_indx + 1
+				input_parameters[par_indx] = word				
 			end
-		end
+			if par_indx > 0 then
+				meas_win_start_time = tonumber(input_parameters[1])/1000
+			end
+			if par_indx > 1 then
+				meas_win_length = tonumber(input_parameters[2])/1000
+			end
+			if par_indx > 2 then
+				meas_max_percent = tonumber(input_parameters[3])/100
+			end
 			break;
 		end
 	end			
@@ -236,7 +263,7 @@ function main()
 		local temp_track = reaper.GetMediaItem_Track(item)
 		
 		if temp_track == track then
-			tune_sample(item, tune_mode)
+			tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas_max_percent)
 		end
 	end	
 	reaper.Undo_EndBlock("Tune Selected Samples", 0)
