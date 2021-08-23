@@ -9,14 +9,11 @@
 --
 -- author: Risto Sipola
 
-rate = 1 -- number codes of the modes
-pitch = 2 -- do not change
-
 --------------------------------------------------------------------------------------------------------
 ------------------------ change these to change the default behavior -----------------------------------
 --------------------------------------------------------------------------------------------------------
 
-default_tune_mode = rate -- change this to change the default behavior of the script. 'rate' or 'pitch'.
+default_tune_mode = "rate" -- change this to change the default behavior of the script. "rate" or "pitch".
 
 default_measurement_window_start_time_ms = 400 -- the measurement should start once the note pitch has settled.
 
@@ -125,7 +122,7 @@ function calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measu
 	
 	local measurements = {}
 	local measurements_idx = 0
-	local pitch_ = 0
+	local pitch = 0
 	local offset_increment = math.floor(measuring_interval_sec * samplerate)
 	local buffer_offset = -offset_increment
 	
@@ -133,11 +130,11 @@ function calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measu
 		
 		buffer_offset = buffer_offset + offset_increment
 		
-		pitch_ = zero_crossing_method(audio_buffer, buffer_size, buffer_offset, samplerate, ideal_pitch)
+		pitch = zero_crossing_method(audio_buffer, buffer_size, buffer_offset, samplerate, ideal_pitch)
 	
-		if pitch_ ~= -1 and pitch_ ~= nil then
+		if pitch ~= -1 and pitch ~= nil then
 			measurements_idx = measurements_idx + 1
-			measurements[measurements_idx] = pitch_
+			measurements[measurements_idx] = pitch
 		end
 	end
 	
@@ -185,8 +182,9 @@ function tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas
 		local ideal_pitch = note_frequencies[note_frequencies_size - (r - 23)]
 
 		local pitch_delta = calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measuring_interval_sec, ideal_pitch)
+
 		if pitch_delta ~= -1 then
-			if tune_mode == pitch then
+			if tune_mode == "pitch" then
 				-- changing the sample tuning
 				local pitch_shift = -pitch_delta / ideal_pitch / linear_cent_approximation / 100
 				reaper.SetMediaItemTakeInfo_Value(take, "D_PITCH", pitch_shift)
@@ -233,11 +231,11 @@ function main()
 		if identifier_found then
 			for word in string.gmatch(name, "%a+") do 
 				if word == "rate" then
-					tune_mode = rate
+					tune_mode = "rate"
 					break;
 				end
 				if word == "pitch" then
-					tune_mode = pitch
+					tune_mode = "pitch"
 					break;
 				end
 			end
