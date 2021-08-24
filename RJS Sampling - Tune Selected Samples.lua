@@ -1,7 +1,7 @@
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script tunes the selected samples.
 --
--- To change the tuning mode (pitch/playrate) or the measurement window settings use a project marker as an input command.     
+-- To change the tuning mode (pitch shift algorithm / playrate change) or the measurement window settings use a project marker as an input command.     
 -- To change the default settings, change the code lines below.
 --
 -- How to use:
