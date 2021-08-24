@@ -4,6 +4,10 @@
 -- To change the tuning mode (pitch/playrate) or the measurement window settings use a project marker as an input command.     
 -- To change the default settings, change the code lines below.
 --
+-- How to use:
+--            1. The samples need to be labelled. Run pitch detection or midi note assignment first.
+--            2. Run the tuning script.
+--
 -- Input command:       'tune   [tuning mode: pitch/rate]   [measurement window start time (milliseconds)]    [measurement window (max) length (ms)]    [measurement stop point (max percentage of the sample length)]' 
 --
 --
