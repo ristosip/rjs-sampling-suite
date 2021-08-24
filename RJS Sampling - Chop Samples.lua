@@ -29,6 +29,27 @@
 --
 -- author: Risto Sipola
 
+------------------------------------------------------------------------------------------
+--------------------------- Default settings----------------------------------------------
+------------------------------------------------------------------------------------------
+
+default_min_sample_length_ms = 500
+
+default_leading_pad_length_ms = 1
+
+default_start_point_sensitivity_mode = 2
+
+default_end_point_accuracy_mode = 2
+
+default_show_what_is_cut = true
+
+default_sample_fade_out_length_ms = 100
+
+default_sample_fade_in_length_ms = 0.5  -- notice that decimal number values cannot be passed via the input command. The default value given here can be a decimal number.
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
 function get_sample_block(block_size, audio_accessor, sample_rate, num_channels, sample_offset)
 
 		local bufferSize = block_size * num_channels
@@ -278,17 +299,17 @@ end
 
 function main()
 
-	local default_sensitivity_mode = 2
-	local sensitivity_mode_sp = default_sensitivity_mode
-	local sensitivity_mode_ep = default_sensitivity_mode
+	--local default_sensitivity_mode = 2
+	local sensitivity_mode_sp = default_start_point_sensitivity_mode
+	local sensitivity_mode_ep = default_end_point_accuracy_mode
 	local startpoints_detection_sensitivity
 	local endpoints_detection_sensitivity
 
-	local leading_pad = 0.001
-	local fade_in_length = 0.0005
-	local fade_out_length = 0.100
-	local show_what_is_cut = true
-	local minLength = 0.500
+	local leading_pad = default_leading_pad_length_ms / 1000
+	local fade_in_length = default_sample_fade_in_length_ms / 1000 
+	local fade_out_length = default_sample_fade_out_length_ms / 1000 
+	local show_what_is_cut = default_show_what_is_cut 
+	local minLength = default_min_sample_length_ms / 1000 
 	local cut_outs_track
 
 	-- read input data
