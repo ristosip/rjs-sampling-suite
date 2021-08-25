@@ -401,7 +401,8 @@ function main()
 	local num_of_items = reaper.CountTrackMediaItems(track)	
 
 	for i = num_of_items - 1, 0, -1 do
-	
+		
+		local original_item_identifier = (i + 1) * 1000		
 		local item = reaper.GetTrackMediaItem(track, i)
 		local take = reaper.GetTake(item, 0)
 		local source = reaper.GetMediaItemTake_Source(take)
@@ -439,7 +440,7 @@ function main()
 					if ret_item ~= nil then
 						reaper.SetMediaItemInfo_Value(ret_item, "D_FADEINLEN", fade_in_length)
 						reaper.SetMediaItemInfo_Value(ret_item, "D_FADEOUTLEN", fade_out_length)
-						reaper.GetSetMediaItemInfo_String(ret_item, "P_NOTES", tostring(i).." "..tostring(i+1), true)
+						reaper.GetSetMediaItemInfo_String(ret_item, "P_NOTES", tostring(i + original_item_identifier).." "..tostring(i+1 + original_item_identifier), true)
 						
 						if pointTypes[i] == 0 then					
 							if show_what_is_cut == true then
@@ -453,7 +454,7 @@ function main()
 					end 					
 					if i == 1 then
 						if pointTypes[1] == 1 then
-							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0).." "..tostring(1), true)
+							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
 							if show_what_is_cut == true then
 								reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", 0)
 								reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", 0)
@@ -464,7 +465,7 @@ function main()
 						else
 							reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", fade_in_length)
 							reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", fade_out_length)
-							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0).." "..tostring(1), true)
+							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
 						end
 					end
 				end
