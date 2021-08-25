@@ -7,7 +7,7 @@ Rendered/exported files are named so that they are compatible with Kontakt's aut
 
 Developed and tested in Reaper 6.12 on Win 10.
 
-User guide video with examples: https://www.youtube.com/watch?v=aU949_-IX-A
+Tutorial videos: https://www.youtube.com/watch?v=Cw7y8kodYjI&list=PL1BNnFgl-NBdJQHV-WgNP43zBzF5QR9KP
 
 Reaper is a digital audio workstation (DAW) that provides ReaScript API which enables users to create custom actions. (https://www.reaper.fm/sdk/reascript/reascript.php)
 
