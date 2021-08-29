@@ -1,3 +1,6 @@
+-- Copyright (C) 2021 Risto Sipola
+-- License: See LICENSE.txt
+--
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script detects the pitches (closest musical note) of the samples and labels the samples accordingly. In addition, the script creates a tuning aid track (See details below).
 --
