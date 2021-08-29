@@ -1,3 +1,6 @@
+-- Copyright (C) 2021 Risto Sipola
+-- License: See LICENSE.txt
+--
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script adjusts the ending point of the sample.
 -- 'Chop Samples' script should be run before running this script as it links the samples and the cut out pieces that this script adjusts.
