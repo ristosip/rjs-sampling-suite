@@ -1,3 +1,6 @@
+-- Copyright (C) 2021 Risto Sipola
+-- License: See LICENSE.txt
+--
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script labels the samples based on timeline markers that indicate midi note numbers.
 --
