@@ -23,7 +23,7 @@
 --             Increased end point detection accuracy (useful when cutting sounds with long quiet tails):                          'chop 500 1 2 3'
 --
 -- Noisy Modes:
---             Noisy modes may be useful when a recording has a very high noise floor (due to being a compressed or auto-gained signal of a portable recorder or  a phone).
+--             Noisy modes may be useful when a recording has a very high noise floor (due to being a compressed or auto-gained signal of a portable recorder or a phone, for example).
 --             Available parameter values: 10 (high noise floor), 11 (very high noise floor)
 --             Example:   'chop 500 1 11 10'
 --             The start point sensitivity can be more of an issue then the end point accuracy setting.
