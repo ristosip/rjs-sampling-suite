@@ -1,8 +1,8 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script creates tracks and regions and moves the samples on the new tracks. The regions and tracks are named so that the rendered samples can easily be automapped in Kontakt. Utilize Reaper's file naming "wildcards" when rendering! (See details below.)
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
 --
 -- How to use: 
 --             1. Preparation: The (main mic) samples are labeled and lined up on the first track, ideally, after running 'Chop Samples' and 'Detect Sample Pitch' or 'Assign Percussion Keys'.
