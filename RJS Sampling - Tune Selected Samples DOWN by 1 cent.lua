@@ -1,8 +1,9 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script changes the pitch of the selected samples by 1 cent.
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
+--
 -- author: Risto Sipola
 
 --------------------------------------------------------------------------------------------------------
