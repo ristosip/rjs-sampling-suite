@@ -1,8 +1,9 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script moves the samples to the beginning of the track with an even spacing between the samples.
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
+--
 -- This is a convenience script and running it is optional. It doesn't add anything to the automated processes.
 -- author: Risto Sipola
 
