@@ -1,8 +1,9 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script updates the midi note labelling of the samples.
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
+--
 -- author: Risto Sipola
 
 function update_group_member_items(item, note)
