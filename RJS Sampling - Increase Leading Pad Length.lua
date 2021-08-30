@@ -1,8 +1,9 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script adjusts the starting point of the sample.
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
+--
 -- 'Chop Samples' script should be run before running this script as it links the samples and the cut out pieces that this script adjusts.
 -- The script always adjusts the sample, meaning 'leading pad' refers to the 'leading pad' of the sample, not the cut out piece!
 -- How to use: select a sample on the first track or a cut out item on the 'Cut-outs' track and run the script. It's possible to select multiple samples.
