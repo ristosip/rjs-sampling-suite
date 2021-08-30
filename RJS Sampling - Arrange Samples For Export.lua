@@ -42,7 +42,7 @@
 --
 --
 -- A Command that covers most use cases:
---              'arr [num low layers] [num highest layers] offxxxxx [articulation name] [dynamic level point]'
+--              'arr [num low layers] [num highest layers] [number of round robins] offxxxxx [articulation name] [dynamic level point]'
 --
 --               This command allows you to easily create various velocity distributions:
 --               * Use [num highest layers] to target the higher velocity section (default range is 116-127). You can also omit this number entirely!
