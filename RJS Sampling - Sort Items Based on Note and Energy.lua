@@ -1,8 +1,9 @@
--- Copyright (C) 2021 Risto Sipola
--- License: See LICENSE.txt
---
 -- This script is a part of 'RJS Sampling Suite' designed to automate tasks related to sample instrument creation.
 -- Running the script reorders the samples based on note and signal energy values.
+--
+-- Copyright (C) 2021 Risto Sipola
+-- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
+--
 -- The script is designed to help sorting and curating the samples that go into the 'arranging for export' phase.
 -- This is a convenience script and running it is optional. It doesn't add anything to the automated processes.
 --
