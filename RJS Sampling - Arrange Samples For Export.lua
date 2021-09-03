@@ -241,7 +241,7 @@ function parse_input_command()
 		end
 		
 		for word in string.gmatch(name, "%a+") do
-			if word ~= "arr" and word ~= "nopitch"and word ~= "stretch" and word ~= "nostretch" and word ~= "preferup" and word ~= "onlyup" and word ~= "onlydown" and string.find(word, "offset") == nil then
+			if word ~= "arr" and word ~= "nopitch"and word ~= "stretch" and word ~= "nostretch" and word ~= "preferup" and word ~= "onlyup" and word ~= "onlydown" and string.find(word, "off") == nil then
 				articulation_name = word
 			end 
 			if word == "nopitch" then
