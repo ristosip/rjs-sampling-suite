@@ -570,9 +570,8 @@ function move_items_to_tracks(number_of_tracks, round_robin_count, no_pitch, tra
 					if(item ~= nil) then
 					
 						local color_item = reaper.GetMediaItemInfo_Value(item, "I_CUSTOMCOLOR")
-						local r_item, g, b = reaper.ColorFromNative(color_item) -- this makes it possible to arrange unlabelled samples
 						
-						if reaper.GetMediaItemInfo_Value(item, "I_CUSTOMCOLOR") == color or no_pitch == true or r_reg == r_item then			
+						if reaper.GetMediaItemInfo_Value(item, "I_CUSTOMCOLOR") == color or no_pitch == true then		
 							reaper.MoveMediaItemToTrack(item, reaper.GetTrack(0, j))
 							reaper.SetMediaItemPosition(item, pos, true)
 							reaper.SetMediaItemSelected(item, false)	
@@ -627,14 +626,48 @@ function move_items_to_tracks(number_of_tracks, round_robin_count, no_pitch, tra
 	end
 end
 
+function get_last_region_end_time()
+	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
+	local last_region_end_time = 0
+	
+	for i = num_markers + num_regions - 1, 0, -1 do
+		retval, isrgn, pos, rgnend, name, markrgnindexnumber = reaper.EnumProjectMarkers(i)
+		if isrgn then
+			last_region_end_time = rgnend
+			break -- last region found
+		end		
+	end
+	return last_region_end_time
+end
+
+function seal_off_existing_regions()
+	local regions_exist = false
+	
+	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
+	
+	for i = num_markers + num_regions - 1, 0, -1 do
+		local retval, isrgn, pos, rgnend, name, markrgnindexnumber, color = reaper.EnumProjectMarkers3(0, i)
+		if isrgn then
+			local r, g, b = reaper.ColorFromNative(color)
+			color = reaper.ColorToNative(r, g, b + 1)
+			reaper.SetProjectMarker3(0, markrgnindexnumber, isrgn, pos, rgnend, name, color|0x1000000)
+		end		
+	end
+	
+	if num_regions > 0 then
+		regions_exist = true
+	end
+	return regions_exist
+end
+
 function arrange_samples(track_idx)
 
 	local track = reaper.GetTrack(0, track_idx) 
 	local item_count = reaper.CountTrackMediaItems(track)
 	if(item_count > 0) then
-			
+					
 		local region_lenght = 10
-		local start_point = 10
+		local start_point = get_last_region_end_time() + 10
 		local lowest_note = 109
 		local highest_note = -1
 		local max_item_length = 0
@@ -726,7 +759,8 @@ function arrange_samples(track_idx)
 end
 
 function main()
-		
+
+	seal_off_existing_regions()
 	local main_track = reaper.GetTrack(0, 0)	
 	local main_sample_count = reaper.CountTrackMediaItems(main_track)
 	local group_ids = {}
