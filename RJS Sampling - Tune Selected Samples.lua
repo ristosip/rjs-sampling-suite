@@ -217,7 +217,7 @@ function tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas
 				local pitch_shift = -pitch_delta / ideal_pitch / linear_cent_approximation / 100
 				reaper.SetMediaItemTakeInfo_Value(take, "D_PITCH", pitch_shift)
 				reaper.UpdateItemInProject(item)
-				update_group_member_items(item, playrate, "pitch")
+				update_group_member_items(item, pitch_shift, "pitch")
 			else
 				local playrate = ideal_pitch / (ideal_pitch + pitch_delta)
 				reaper.SetMediaItemTakeInfo_Value(take, "B_PPITCH", 0)				
