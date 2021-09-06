@@ -41,6 +41,27 @@ note_frequencies = {4434.922, 4186.009, 3951.066, 3729.310, 3520.000, 3322.438, 
 32.70320, 30.86771}
 note_frequencies_size = 87
 
+function update_group_member_items(item, value, tune_mode)
+	local item_count = reaper.CountTrackMediaItems(reaper.GetMediaItem_Track(item))
+	local group_id = reaper.GetMediaItemInfo_Value(item, "I_GROUPID")
+	
+	if group_id ~= 0 then
+		for i = reaper.CountMediaItems(0) - 1, 0, -1 do
+			local temp_item = reaper.GetMediaItem(0, i)
+			local temp_id = reaper.GetMediaItemInfo_Value(temp_item, "I_GROUPID")
+			if temp_id == group_id and temp_item ~= item then
+				if tune_mode == "pitch" then
+					reaper.SetMediaItemTakeInfo_Value(reaper.GetTake(temp_item, 0), "D_PITCH", value)
+					reaper.UpdateItemInProject(temp_item)
+				else
+					reaper.SetMediaItemTakeInfo_Value(reaper.GetTake(temp_item, 0), "D_PLAYRATE", value)
+					reaper.UpdateItemInProject(temp_item)
+				end
+			end			
+		end		
+	end	
+end
+
 function get_audio_buffer(take, start_time_sec, length_sec)
 
 	local source = reaper.GetMediaItemTake_Source(take)
@@ -196,11 +217,13 @@ function tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas
 				local pitch_shift = -pitch_delta / ideal_pitch / linear_cent_approximation / 100
 				reaper.SetMediaItemTakeInfo_Value(take, "D_PITCH", pitch_shift)
 				reaper.UpdateItemInProject(item)
+				update_group_member_items(item, playrate, "pitch")
 			else
 				local playrate = ideal_pitch / (ideal_pitch + pitch_delta)
 				reaper.SetMediaItemTakeInfo_Value(take, "B_PPITCH", 0)				
 				reaper.SetMediaItemTakeInfo_Value(take, "D_PLAYRATE", playrate)
 				reaper.UpdateItemInProject(item)
+				update_group_member_items(item, playrate, "rate")
 			end
 		else
 			-- when tuning fails, set the values back to original
