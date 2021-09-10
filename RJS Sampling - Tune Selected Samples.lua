@@ -54,6 +54,7 @@ function update_group_member_items(item, value, tune_mode)
 					reaper.SetMediaItemTakeInfo_Value(reaper.GetTake(temp_item, 0), "D_PITCH", value)
 					reaper.UpdateItemInProject(temp_item)
 				else
+					reaper.SetMediaItemTakeInfo_Value(reaper.GetTake(temp_item, 0), "B_PPITCH", 0)	
 					reaper.SetMediaItemTakeInfo_Value(reaper.GetTake(temp_item, 0), "D_PLAYRATE", value)
 					reaper.UpdateItemInProject(temp_item)
 				end
