@@ -544,7 +544,6 @@ function move_items_to_tracks(number_of_tracks, round_robin_count, no_pitch, tra
 		reaper.SetMediaItemSelected(reaper.GetMediaItem(0, i), false)
 	end
 	
-	--local track = reaper.GetTrack(0, 0)
 	local item_count = reaper.CountTrackMediaItems(track)
 	
 	for i = 0, item_count - 1, 1 do
