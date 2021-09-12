@@ -763,25 +763,20 @@ function main()
 	seal_off_existing_regions()
 	local main_track = reaper.GetTrack(0, 0)	
 	local main_sample_count = reaper.CountTrackMediaItems(main_track)
-	local group_ids = {}
-	local group_ids_idx = 0
+	local group_ids = {-1} -- first value is dummy content, because the list can't be nil
+	local group_ids_idx = 1
 	
 	for i = 0,  main_sample_count - 1, 1 do
 		local temp_item = reaper.GetTrackMediaItem(main_track, i)
 		local id = reaper.GetMediaItemInfo_Value(temp_item, "I_GROUPID")
 		if id ~= 0 then
-			if group_ids_idx == 0 then
-				group_ids_idx = 1
-				group_ids[group_ids_idx] = id
-			else
-				for j = 1, group_ids_idx, 1 do
-					if id == group_ids[j] then
-						break;
-					else
-						if j == group_ids_idx then
-							group_ids_idx = group_ids_idx + 1
-							group_ids[group_ids_idx] = id
-						end
+			for j = 1, group_ids_idx, 1 do
+				if id == group_ids[j] then
+					break;
+				else
+					if j == group_ids_idx then
+						group_ids_idx = group_ids_idx + 1
+						group_ids[group_ids_idx] = id
 					end
 				end
 			end
