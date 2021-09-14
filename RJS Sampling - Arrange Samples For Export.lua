@@ -30,6 +30,7 @@
 -- Input Command:
 --             'arr [velocity layer structure] [number of round robins] [stretching policy] [offset amount] [articulation name] [pitch handling] [dynamic level points]'
 --
+--              Note: The articulation name cannot contain numbers or special characters! Numbers will get misinterpreted!
 --
 -- Examples of valid input commands:
 --              Default settings: no input command needed, just run the script!       Default: 'arr 1 1 Default'
