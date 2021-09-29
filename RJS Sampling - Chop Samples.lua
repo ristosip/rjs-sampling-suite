@@ -26,7 +26,7 @@
 --             Noisy modes may be useful when a recording has a very high noise floor (due to being a compressed or auto-gained signal of a portable recorder or a phone, for example).
 --             Available parameter values: 10 (high noise floor), 11 (very high noise floor)
 --             Example:   'chop 500 1 11 10'
---             The start point sensitivity can be more of an issue then the end point accuracy setting.
+--             The start point sensitivity can be more of an issue than the end point accuracy setting.
 --             -- These settings seem to work well:    'chop 500 1 10 1'    or    'chop 500 1 11 1'   (notice that the end point accuracy is the lowest one in the normal range, no noisy mode needed)
 --
 --
