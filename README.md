@@ -17,7 +17,7 @@ Kontakt is a sampler software.
 ---------------------------    Contact info:   ---------------------------------
 --------------------------------------------------------------------------------
 
-                    rjs.audioprogramming  (at)  gmai1 .c0m
+                    rjs.audioprogramming  (at)  gmai1
 
 Before sending in a bug report, please take the following steps:
 1. Double-check for an user error. Please see the documention in the script files and the tutorial videos for help.
