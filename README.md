@@ -33,7 +33,7 @@ If the problem persists, continue by writing a bug report:
 	* "  ...   ... "
 	* "N. After this you should see [the effect].."
 2. Optional: Send a (screen capture) video of the problem.
-	* Upload the video on youtube (as an unlisted video) and share the link.
+	* Upload the video on YouTube (as an unlisted video) and share the link.
 
 Further steps such as creating a project demonstration can be agreed upon after the initial report if needed.
 
