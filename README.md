@@ -21,7 +21,7 @@ Kontakt is a sampler software.
 			rjs.audioprogramming
 
 Before sending in a bug report, please take the following steps:
-1. Double-check for an user error. Please see the documention in the script files and the tutorial videos for help.
+1. Double-check for a user error. Please see the documention in the script files and the tutorial videos for help.
 2. Make sure the unexpected behavior is replicable using an unmodified script file. 
 	* This rule can be relaxed when it comes to modifying 'default settings'.
 	* If a certain default value setting is causing the problem, try to zero in on which variable setting breaks the script.
