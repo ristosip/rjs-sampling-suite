@@ -209,10 +209,13 @@ function tune_sample(item, tune_mode, meas_win_start_time, meas_win_length, meas
 		local r, g, b = reaper.ColorFromNative(item_color)
 		
 		local ideal_pitch = note_frequencies[note_frequencies_size - (r - 23)]
+		
+		local pitch_delta
+		if ideal_pitch ~= nil then
+			pitch_delta = calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measuring_interval_sec, ideal_pitch)
+		end
 
-		local pitch_delta = calculate_pitch_difference(audio_buffer, buffer_size, samplerate, measuring_interval_sec, ideal_pitch)
-
-		if pitch_delta ~= -1 then
+		if ideal_pitch ~= nil and pitch_delta ~= -1 then
 			if tune_mode == "pitch" then
 				-- changing the sample tuning
 				local pitch_shift = -pitch_delta / ideal_pitch / linear_cent_approximation / 100
