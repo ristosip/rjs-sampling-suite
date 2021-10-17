@@ -35,6 +35,8 @@ If the problem persists, continue by writing a bug report:
 	* "N. After this you should see [the effect].."
 2. Optional: Send a (screen capture) video of the problem.
 	* Upload the video on YouTube (as an unlisted video) and share the link.
+3. If a message window opens as a script fails, include the message to the report.
+4. Include information about your setup: Reaper version and sample rate.
 
 Further steps such as creating a project demonstration can be agreed upon after the initial report if needed.
 
