@@ -14,8 +14,11 @@
 --
 -- author: Risto Sipola
 
+
+---------------------
 -- Default Settings--
 ---------------------
+
 default_position = 10.0 -- position of the items in seconds
 default_want_grid_markers = true
 default_grid_marker1_pos = 0.001
@@ -25,6 +28,8 @@ default_grid_marker4_pos = 0.010
 
 default_want_auto_zoom = true
 default_auto_zoom = 10 -- pixels per millisecond
+
+default_items_need_to_be_selected = false
 
 ---------------------
 ---------------------
@@ -100,13 +105,22 @@ function main()
 	local track = reaper.GetTrack(0, 0)
 	local item_count = reaper.CountTrackMediaItems(track)
 	local loop_count = 0
+	local ignore_count = 0
 	
 	if item_count > 0 then	
 		reaper.Undo_BeginBlock()
-		while item_count > 0 and loop_count < 1000 do			
-			local item = reaper.GetTrackMediaItem(track, 0)
+		while item_count - ignore_count > 0 and loop_count < 1000 do			
+			local item = reaper.GetTrackMediaItem(track, 0 + ignore_count)
 			if item ~= nil then
-				move_item_to_new_track(item)
+				if default_items_need_to_be_selected then
+					if reaper.IsMediaItemSelected(item) then
+						move_item_to_new_track(item)
+					else
+					 	ignore_count = ignore_count + 1
+					end
+				else
+					move_item_to_new_track(item)
+				end
 			end
 			item_count = reaper.CountTrackMediaItems(track)
 			loop_count = loop_count + 1
