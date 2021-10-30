@@ -302,7 +302,7 @@ end
 
 function main()
 
-	--local default_sensitivity_mode = 2
+	local default_sensitivity_mode = 2
 	local sensitivity_mode_sp = default_start_point_sensitivity_mode
 	local sensitivity_mode_ep = default_end_point_accuracy_mode
 	local startpoints_detection_sensitivity
@@ -361,7 +361,7 @@ function main()
 	if (sensitivity_mode_sp < 1 or sensitivity_mode_sp > 3) and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11 then
 		sensitivity_mode_sp = default_sensitivity_mode
 	end
-	if (sensitivity_mode_ep < 1 or sensitivity_mode_ep > 3) and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11  then
+	if (sensitivity_mode_ep < 1 or sensitivity_mode_ep > 3) and sensitivity_mode_ep ~= 10 and sensitivity_mode_ep ~= 11  then
 		sensitivity_mode_ep = default_sensitivity_mode
 	end
 
@@ -390,12 +390,12 @@ function main()
 		end
 	elseif sensitivity_mode_ep == 10 then
 		endpoints_detection_sensitivity = 1000.0 -- noisy mode: high noise floor
-		if sensitivity_mode_sp == 3 then
+		if sensitivity_mode_sp ~= 1 and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11  then
 			endpoints_detection_sensitivity = 10.0
 		end
 	elseif sensitivity_mode_ep == 11 then
 		endpoints_detection_sensitivity = 10000.0 -- extra noisy mode: very high noise floor
-		if sensitivity_mode_sp == 3 then
+		if sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11 then
 			endpoints_detection_sensitivity = 10.0
 		end
 	end
