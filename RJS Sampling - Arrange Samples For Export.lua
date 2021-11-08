@@ -215,7 +215,7 @@ function parse_input_command()
 	local mf_layer_count = 0
 	local f_layer_count = 0
 	local ff_layer_count = 1 -- default value for the most simple use cases with no input command
-	local articulation_name = "Default" -- default value for the most simple use cases with no input command
+	local articulation_name = default_articulation_name
 	local round_robin_count	= 1 -- default value for the most simple use cases with no input command
 	local no_pitch = default_ignore_item_pitch
 	local stretch = default_stretch_to_cover_keyboard
