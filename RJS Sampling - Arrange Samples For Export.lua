@@ -131,6 +131,17 @@
 --
 -- author: Risto Sipola
 
+------------------------------------------------
+---------------- Default Settings --------------
+------------------------------------------------
+
+default_stretch_policy = 0 -- preferdown = 0, preferup = 1, onlyup = 2, onlydown = 3, nostretch = 4
+default_stretch_to_cover_keyboard = false
+
+default_articulation_name = "Default"
+
+default_ignore_item_pitch = false -- if true, the script doesn't care about item note values
+
 --default offset
 offset = 10
 ----------------
@@ -157,8 +168,8 @@ default_mf_point_4 = 81
 default_f_point_4 =  101
 default_ff_point_4 = 116
 
--------------------------
--------------------------
+------------------------------------------------
+------------------------------------------------
 
 function contains_dynamic_level_points(input_array, array_length)
 	local count = 0
@@ -206,9 +217,9 @@ function parse_input_command()
 	local ff_layer_count = 1 -- default value for the most simple use cases with no input command
 	local articulation_name = "Default" -- default value for the most simple use cases with no input command
 	local round_robin_count	= 1 -- default value for the most simple use cases with no input command
-	local no_pitch = false
-	local stretch = false
-	local stretch_policy = 0
+	local no_pitch = default_ignore_item_pitch
+	local stretch = default_stretch_to_cover_keyboard
+	local stretch_policy = default_stretch_policy
 	
 	local retv, num_markers, num_regions = reaper.CountProjectMarkers(0)
 	local input_marker_found = false
@@ -251,6 +262,9 @@ function parse_input_command()
 			if word == "stretch" then
 				stretch = true
 			end 
+			if word == "preferdown" then
+				stretch_policy = 0
+			end
 			if word == "preferup" then
 				stretch_policy = 1
 			end
@@ -428,9 +442,6 @@ end
 function add_regions_for_notes(padded_note_list, padded_note_count, region_lenght, start_point, stretch_policy)
 
 	local region_number = 1
-		
-	padded_note_list[1] = padded_note_list[2] - 2 * math.abs(padded_note_list[2] -  padded_note_list[1]) -- taking into account the stretch algorithm
-	padded_note_list[padded_note_count] = padded_note_list[padded_note_count - 1] + 2 * math.abs(padded_note_list[padded_note_count] -  padded_note_list[padded_note_count - 1]) + 1
 
 	for i = 2, padded_note_count - 1, 1 do
 		local note = padded_note_list[i]
@@ -467,6 +478,13 @@ function add_regions_for_notes(padded_note_list, padded_note_count, region_lengh
 		end
 		if note_spacing_down == 0 then
 			stretch_down = 0
+		end
+		-- exceptional handling for the outer limits
+		if i == 2 then
+			stretch_down = note - padded_note_list[1]
+		end
+		if i == padded_note_count - 1 then
+			stretch_up = padded_note_list[padded_note_count] - note
 		end
 
 		reaper.AddProjectMarker2(0, true, start_point + region_lenght * (region_number - 1), start_point + region_lenght * region_number, tostring(note - stretch_down).."_"..tostring(note).."_"..tostring(note + stretch_up), -1, reaper.ColorToNative(note, math.abs(math.floor((255 - (note%12)/12 * 255))),math.floor((note%12)/12 * 255/2))|0x1000000)
