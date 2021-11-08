@@ -177,11 +177,16 @@ function main()
 		for i = 0, itemCount - 1, 1 do
 		
 			local item = reaper.GetTrackMediaItem(reaper.GetTrack(0, 0), i)
+			local item_len = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
 			local take = reaper.GetTake(item, 0)
 			local resampling_factor = 1 / 8
 			local snippet_length = 0.060
 			local start_time_sec = 0.800
 			local resampledBuffer, resampledBufferSize
+			
+			if start_time_sec + snippet_length > 0.8 * item_len then
+				start_time_sec = 0.5 * item_len
+			end
 
 			local audio_buffer, buffer_size, samplerate = get_audio_buffer(take, start_time_sec, snippet_length)
 			
