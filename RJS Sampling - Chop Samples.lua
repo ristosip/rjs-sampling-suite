@@ -36,6 +36,8 @@
 --------------------------- Default settings----------------------------------------------
 ------------------------------------------------------------------------------------------
 
+default_open_dialog_box_if_no_marker = true
+
 default_min_sample_length_ms = 500
 
 default_leading_pad_length_ms = 1
@@ -52,6 +54,68 @@ default_sample_fade_in_length_ms = 0.5  -- notice that decimal number values can
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
+
+function get_user_input_via_dialog_box()
+
+	local min_len = default_min_sample_length_ms
+	local lead_len = default_leading_pad_length_ms
+	local sp_sens = default_start_point_sensitivity_mode
+	local ep_acc = default_end_point_accuracy_mode
+	local show_cut = default_show_what_is_cut
+	local fade_out = default_sample_fade_out_length_ms
+	local fade_in = default_sample_fade_in_length_ms
+	
+	local dialog_caption_string = "Minimum sample length (ms):,Leading pad length (ms):,Start detection sensitivity (1-3):,End detection accuracy (1-3):,Show what is cut:,Fade out length (ms):,Fade in length (ms):"
+	local dialog_string = tostring(min_len)..","..tostring(lead_len)..","..tostring(sp_sens)..","..tostring(ep_acc)..","..tostring(show_cut)..","..tostring(fade_out)..","..tostring(fade_in)
+	local input_count = 7
+	
+	local retval, retvals_csv = reaper.GetUserInputs("Chop Samples", input_count, dialog_caption_string, dialog_string)
+
+	if retval == true then
+		local temp_min, temp_lead, temp_sp, temp_ep, temp_cut, temp_f_out, temp_f_in
+		
+		temp_min, temp_lead, temp_sp, temp_ep, temp_cut, temp_f_out, temp_f_in = retvals_csv:match("([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)")
+
+		temp_min = tonumber(temp_min)
+		temp_lead = tonumber(temp_lead)
+		temp_sp = tonumber(temp_sp)
+		temp_ep = tonumber(temp_ep)
+		temp_f_out = tonumber(temp_f_out)
+		temp_f_in = tonumber(temp_f_in)
+		local temp_cut_num = tonumber(temp_cut)
+		
+		if temp_min ~= nil and temp_min >= 0 then
+			min_len = temp_min / 1000
+		end
+		if temp_lead ~= nil and temp_lead >= 0 then
+			lead_len = temp_lead / 1000
+		end
+		if temp_sp ~= nil and temp_sp >= 0 then
+			sp_sens = math.floor(temp_sp)
+		end
+		if temp_ep ~= nil and temp_ep >= 0 then
+			ep_acc = math.floor(temp_ep)
+		end
+		if temp_f_out ~= nil and temp_f_out >= 0 then
+			fade_out = temp_f_out / 1000
+		end
+		if temp_f_in ~= nil and temp_f_in >= 0 then
+			fade_in = temp_f_in / 1000
+		end
+		if temp_cut_num == 1 then
+			show_cut = true
+		elseif temp_cut_num == 0 then
+			show_cut = false
+		end
+		if temp_cut == "true" then
+			show_cut = true
+		elseif temp_cut == "false" then
+			show_cut = false
+		end
+	end
+
+	return min_len, lead_len, sp_sens, ep_acc, show_cut, fade_out, fade_in, not retval
+end
 
 function get_sample_block(block_size, audio_accessor, sample_rate, num_channels, sample_offset)
 
@@ -316,6 +380,7 @@ function main()
 	local cut_outs_track
 
 	-- read input data
+	local marker_found = false
 	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
 	local marker_count = num_markers + num_regions
 	for i = 0, marker_count - 1, 1 do
@@ -327,6 +392,7 @@ function main()
 		local j, k = string.find(name, "chop")
 
 		if j ~= nil then
+			marker_found = true
 			for word in string.gmatch(name, "%d+") do 
 				input_parameters[par_indx] = word
 				par_indx = par_indx + 1
@@ -358,6 +424,11 @@ function main()
 		end
 	end 
 	
+	local cancelled = false
+	if not marker_found and default_open_dialog_box_if_no_marker then
+		minLength, leading_pad, sensitivity_mode_sp, sensitivity_mode_ep, show_what_is_cut, fade_out_length, fade_in_length, cancelled = get_user_input_via_dialog_box()
+	end
+	
 	if (sensitivity_mode_sp < 1 or sensitivity_mode_sp > 3) and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11 then
 		sensitivity_mode_sp = default_sensitivity_mode
 	end
@@ -365,118 +436,120 @@ function main()
 		sensitivity_mode_ep = default_sensitivity_mode
 	end
 
-		 
-	if sensitivity_mode_sp == 1 then
-		startpoints_detection_sensitivity = 1.0
-	elseif sensitivity_mode_sp == 2 then
-		startpoints_detection_sensitivity = 10.0
-	elseif sensitivity_mode_sp == 3 then
-		startpoints_detection_sensitivity = 100.0
-	elseif sensitivity_mode_sp == 10 then
-		startpoints_detection_sensitivity = 0.1 -- noisy mode: high noise floor
-	elseif sensitivity_mode_sp == 11 then
-		startpoints_detection_sensitivity = 0.01 -- extra noisy mode: very high noise floor
-	end
-
-
-	if sensitivity_mode_ep == 3 then
-		endpoints_detection_sensitivity = 1.0
-	elseif sensitivity_mode_ep == 2 then
-		endpoints_detection_sensitivity = 10.0
-	elseif sensitivity_mode_ep == 1 then
-		endpoints_detection_sensitivity = 100.0
-		if sensitivity_mode_sp == 3 then
-			endpoints_detection_sensitivity = 10.0
+	if not cancelled then
+			 
+		if sensitivity_mode_sp == 1 then
+			startpoints_detection_sensitivity = 1.0
+		elseif sensitivity_mode_sp == 2 then
+			startpoints_detection_sensitivity = 10.0
+		elseif sensitivity_mode_sp == 3 then
+			startpoints_detection_sensitivity = 100.0
+		elseif sensitivity_mode_sp == 10 then
+			startpoints_detection_sensitivity = 0.1 -- noisy mode: high noise floor
+		elseif sensitivity_mode_sp == 11 then
+			startpoints_detection_sensitivity = 0.01 -- extra noisy mode: very high noise floor
 		end
-	elseif sensitivity_mode_ep == 10 then
-		endpoints_detection_sensitivity = 1000.0 -- noisy mode: high noise floor
-		if sensitivity_mode_sp ~= 1 and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11  then
+
+
+		if sensitivity_mode_ep == 3 then
+			endpoints_detection_sensitivity = 1.0
+		elseif sensitivity_mode_ep == 2 then
 			endpoints_detection_sensitivity = 10.0
-		end
-	elseif sensitivity_mode_ep == 11 then
-		endpoints_detection_sensitivity = 10000.0 -- extra noisy mode: very high noise floor
-		if sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11 then
-			endpoints_detection_sensitivity = 10.0
-		end
-	end
-	
-	local track = reaper.GetTrack(0, 0)	
-	local num_of_items = reaper.CountTrackMediaItems(track)	
-
-	for i = num_of_items - 1, 0, -1 do
-		
-		local original_item_identifier = (i + 1) * 1000		
-		local item = reaper.GetTrackMediaItem(track, i)
-		local take = reaper.GetTake(item, 0)
-		local source = reaper.GetMediaItemTake_Source(take)
-		local numchannels = reaper.GetMediaSourceNumChannels(source)
-		local samplerate = reaper.GetMediaSourceSampleRate(source)
-		local itemEndtime = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
-		local audioAccessor = reaper.CreateTakeAudioAccessor(take)
-
-		if audioAccessor ~= nil and samplerate > 0 then
-
-			local splitPoints_raw, pointTypes_raw, array_length_raw = find_sample_splitpoints(audioAccessor, samplerate, numchannels, itemEndtime, startpoints_detection_sensitivity, endpoints_detection_sensitivity)
-		
-			local splitPoints, pointTypes, array_length = clean_up_splits(splitPoints_raw, pointTypes_raw, array_length_raw, samplerate, itemEndtime, minLength)
-		
-			if splitPoints ~= nil and pointTypes ~= nil and array_length > 0 then
-				if show_what_is_cut == true then
-					local num_tracks = reaper.CountTracks(0)
-					local dest_track_exists = false
-					for i = 0, num_tracks - 1, 1 do
-						local temp_track = reaper.GetTrack(0, i)
-						local retval, name = reaper.GetTrackName(temp_track)
-						if name == "Cut-Outs" then
-							dest_track_exists = true
-							cut_outs_track = temp_track
-						end
-					end
-					if dest_track_exists == false then
-						reaper.InsertTrackAtIndex(1, true)
-						cut_outs_track = reaper.GetTrack(0, 1)
-						reaper.GetSetMediaTrackInfo_String(cut_outs_track, "P_NAME", "Cut-Outs", true)
-					end
-				end
-				for i = array_length, 1, -1 do				
-					local ret_item = reaper.SplitMediaItem(item, reaper.GetMediaItemInfo_Value(item, "D_POSITION") + splitPoints[i] / samplerate - leading_pad)
-					if ret_item ~= nil then
-						reaper.SetMediaItemInfo_Value(ret_item, "D_FADEINLEN", fade_in_length)
-						reaper.SetMediaItemInfo_Value(ret_item, "D_FADEOUTLEN", fade_out_length)
-						reaper.GetSetMediaItemInfo_String(ret_item, "P_NOTES", tostring(i + original_item_identifier).." "..tostring(i+1 + original_item_identifier), true)
-						
-						if pointTypes[i] == 0 then					
-							if show_what_is_cut == true then
-								reaper.SetMediaItemInfo_Value(ret_item, "D_FADEINLEN", 0)
-								reaper.SetMediaItemInfo_Value(ret_item, "D_FADEOUTLEN", 0)
-								reaper.MoveMediaItemToTrack(ret_item, cut_outs_track)
-							else
-								reaper.DeleteTrackMediaItem(track, ret_item)
-							end	
-						end
-					end 					
-					if i == 1 then
-						if pointTypes[1] == 1 then
-							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
-							if show_what_is_cut == true then
-								reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", 0)
-								reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", 0)
-								reaper.MoveMediaItemToTrack(item, cut_outs_track)
-							else
-								reaper.DeleteTrackMediaItem(track, item)
-							end	
-						else
-							reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", fade_in_length)
-							reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", fade_out_length)
-							reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
-						end
-					end
-				end
-				reaper.UpdateArrange()
+		elseif sensitivity_mode_ep == 1 then
+			endpoints_detection_sensitivity = 100.0
+			if sensitivity_mode_sp == 3 then
+				endpoints_detection_sensitivity = 10.0
+			end
+		elseif sensitivity_mode_ep == 10 then
+			endpoints_detection_sensitivity = 1000.0 -- noisy mode: high noise floor
+			if sensitivity_mode_sp ~= 1 and sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11  then
+				endpoints_detection_sensitivity = 10.0
+			end
+		elseif sensitivity_mode_ep == 11 then
+			endpoints_detection_sensitivity = 10000.0 -- extra noisy mode: very high noise floor
+			if sensitivity_mode_sp ~= 10 and sensitivity_mode_sp ~= 11 then
+				endpoints_detection_sensitivity = 10.0
 			end
 		end
+		
+		local track = reaper.GetTrack(0, 0)	
+		local num_of_items = reaper.CountTrackMediaItems(track)	
+
+		for i = num_of_items - 1, 0, -1 do
+			
+			local original_item_identifier = (i + 1) * 1000		
+			local item = reaper.GetTrackMediaItem(track, i)
+			local take = reaper.GetTake(item, 0)
+			local source = reaper.GetMediaItemTake_Source(take)
+			local numchannels = reaper.GetMediaSourceNumChannels(source)
+			local samplerate = reaper.GetMediaSourceSampleRate(source)
+			local itemEndtime = reaper.GetMediaItemInfo_Value(item, "D_LENGTH")
+			local audioAccessor = reaper.CreateTakeAudioAccessor(take)
+
+			if audioAccessor ~= nil and samplerate > 0 then
+
+				local splitPoints_raw, pointTypes_raw, array_length_raw = find_sample_splitpoints(audioAccessor, samplerate, numchannels, itemEndtime, startpoints_detection_sensitivity, endpoints_detection_sensitivity)
+			
+				local splitPoints, pointTypes, array_length = clean_up_splits(splitPoints_raw, pointTypes_raw, array_length_raw, samplerate, itemEndtime, minLength)
+			
+				if splitPoints ~= nil and pointTypes ~= nil and array_length > 0 then
+					if show_what_is_cut == true then
+						local num_tracks = reaper.CountTracks(0)
+						local dest_track_exists = false
+						for i = 0, num_tracks - 1, 1 do
+							local temp_track = reaper.GetTrack(0, i)
+							local retval, name = reaper.GetTrackName(temp_track)
+							if name == "Cut-Outs" then
+								dest_track_exists = true
+								cut_outs_track = temp_track
+							end
+						end
+						if dest_track_exists == false then
+							reaper.InsertTrackAtIndex(1, true)
+							cut_outs_track = reaper.GetTrack(0, 1)
+							reaper.GetSetMediaTrackInfo_String(cut_outs_track, "P_NAME", "Cut-Outs", true)
+						end
+					end
+					for i = array_length, 1, -1 do				
+						local ret_item = reaper.SplitMediaItem(item, reaper.GetMediaItemInfo_Value(item, "D_POSITION") + splitPoints[i] / samplerate - leading_pad)
+						if ret_item ~= nil then
+							reaper.SetMediaItemInfo_Value(ret_item, "D_FADEINLEN", fade_in_length)
+							reaper.SetMediaItemInfo_Value(ret_item, "D_FADEOUTLEN", fade_out_length)
+							reaper.GetSetMediaItemInfo_String(ret_item, "P_NOTES", tostring(i + original_item_identifier).." "..tostring(i+1 + original_item_identifier), true)
+							
+							if pointTypes[i] == 0 then					
+								if show_what_is_cut == true then
+									reaper.SetMediaItemInfo_Value(ret_item, "D_FADEINLEN", 0)
+									reaper.SetMediaItemInfo_Value(ret_item, "D_FADEOUTLEN", 0)
+									reaper.MoveMediaItemToTrack(ret_item, cut_outs_track)
+								else
+									reaper.DeleteTrackMediaItem(track, ret_item)
+								end	
+							end
+						end 					
+						if i == 1 then
+							if pointTypes[1] == 1 then
+								reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
+								if show_what_is_cut == true then
+									reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", 0)
+									reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", 0)
+									reaper.MoveMediaItemToTrack(item, cut_outs_track)
+								else
+									reaper.DeleteTrackMediaItem(track, item)
+								end	
+							else
+								reaper.SetMediaItemInfo_Value(item, "D_FADEINLEN", fade_in_length)
+								reaper.SetMediaItemInfo_Value(item, "D_FADEOUTLEN", fade_out_length)
+								reaper.GetSetMediaItemInfo_String(item, "P_NOTES", tostring(0 + original_item_identifier).." "..tostring(1 + original_item_identifier), true)
+							end
+						end
+					end
+					reaper.UpdateArrange()
+				end
+			end
+		end
+		split_grouped_items(track)
 	end
-	split_grouped_items(track)
 end
 
 main()

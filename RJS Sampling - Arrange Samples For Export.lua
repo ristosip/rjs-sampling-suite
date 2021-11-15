@@ -135,6 +135,9 @@
 ---------------- Default Settings --------------
 ------------------------------------------------
 
+default_open_dialog_box_if_no_marker = true
+default_dialog_type = 1 -- 1 = basic, 2 = intermediate, 3 = advanced
+
 default_stretch_policy = 0 -- preferdown = 0, preferup = 1, onlyup = 2, onlydown = 3, nostretch = 4
 default_stretch_to_cover_keyboard = false
 
@@ -170,6 +173,121 @@ default_ff_point_4 = 116
 
 ------------------------------------------------
 ------------------------------------------------
+
+function get_user_input_via_dialog_box()
+
+	local mp_point = default_mp_point_4
+	local mf_point = default_mf_point_4
+	local f_point = default_f_point_4
+	local ff_point = default_ff_point_4
+	local p_layer_count = 0
+	local mp_layer_count = 0
+	local mf_layer_count = 0
+	local f_layer_count = 0
+	local ff_layer_count = 1
+	local articulation_name = default_articulation_name
+	local round_robin_count = 1
+	local number_of_tracks = 0
+	local no_pitch = default_ignore_item_pitch
+	local stretch = default_stretch_to_cover_keyboard
+	local stretch_policy = default_stretch_policy
+	
+	local dialog_caption_string = "Articulation Name:,Velocity Layers:,Round Robins:,Stretch Policy (0-4):,Cover Keyboard:,Velocity offset:"
+	local dialog_string = tostring(articulation_name)..","..tostring(ff_layer_count)..","..tostring(round_robin_count)..","..tostring(stretch_policy)..","..tostring(stretch)..","..tostring(offset)
+	local input_count = 6
+	
+	if default_dialog_type == 2 then
+		dialog_caption_string = "Articulation Name:,Higher Velocity Layers:,Dynamic Level Point:,Lower Velocity Layers:,Round Robins:,Stretch Policy (0-4):,Cover Keyboard:,Velocity offset:"
+		dialog_string = tostring(articulation_name)..","..tostring(1)..","..tostring(ff_point)..","..tostring(1)..","..tostring(round_robin_count)..","..tostring(stretch_policy)..","..tostring(stretch)..","..tostring(offset)
+		input_count = 8
+	elseif default_dialog_type == 3 then
+		dialog_caption_string = "Articulation Name:,Velocity Layers:,Dynamic Level Point FF:,Velocity Layers:,Dynamic Level Point F:,Velocity Layers:,Dynamic Level Point MF:,Velocity Layers:,Dynamic Level Point MP:,Velocity Layers:,Round Robins:,Stretch Policy (0-4):,Cover Keyboard:,Velocity offset:"
+		dialog_string = tostring(articulation_name)..","..tostring(1)..","..tostring(ff_point)..",".."-"..","..tostring(f_point)..",".."-"..","..tostring(mf_point)..",".."-"..","..tostring(mp_point)..",".."-"..","..tostring(round_robin_count)..","..tostring(stretch_policy)..","..tostring(stretch)..","..tostring(offset)
+		input_count = 14
+	end
+	
+	local retval, retvals_csv = reaper.GetUserInputs("Arrange Samples", input_count, dialog_caption_string, dialog_string)
+
+	if retval == true then
+		local temp_name, temp_ff_layers, temp_rr, temp_stretch_pol, temp_stretch, temp_offset, temp_f_layers, temp_mf_layers, temp_mp_layers, temp_p_layers, temp_ff_p, temp_f_p, temp_mf_p, temp_mp_p
+		
+		if default_dialog_type == 1 then
+			temp_name, temp_ff_layers, temp_rr, temp_stretch_pol, temp_stretch, temp_offset = retvals_csv:match("([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)")
+		elseif default_dialog_type == 2 then
+			temp_name, temp_ff_layers, temp_ff_p, temp_f_layers, temp_rr, temp_stretch_pol, temp_stretch, temp_offset = retvals_csv:match("([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)")
+		elseif default_dialog_type == 3 then
+			temp_name, temp_ff_layers, temp_ff_p, temp_f_layers, temp_f_p, temp_mf_layers, temp_mf_p, temp_mp_layers, temp_mp_p, temp_p_layers, temp_rr, temp_stretch_pol, temp_stretch, temp_offset = retvals_csv:match("([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)")
+		end
+		
+		temp_ff_layers = tonumber(temp_ff_layers)
+		temp_rr = tonumber(temp_rr)
+		temp_stretch_pol = tonumber(temp_stretch_pol)
+		local temp_stretch_num = tonumber(temp_stretch)
+		temp_offset = tonumber(temp_offset)
+		temp_f_layers = tonumber(temp_f_layers)
+		temp_mf_layers = tonumber(temp_mf_layers)
+		temp_mp_layers = tonumber(temp_mp_layers)
+		temp_p_layers = tonumber(temp_p_layers)
+		temp_ff_p = tonumber(temp_ff_p)
+		temp_f_p = tonumber(temp_f_p)
+		temp_mf_p = tonumber(temp_mf_p)
+		temp_mp_p= tonumber(temp_mp_p)
+		
+		articulation_name = temp_name
+		if temp_ff_layers ~= nil and temp_ff_layers >= 0 and temp_ff_layers < 127 then
+			ff_layer_count = math.floor(temp_ff_layers)
+		end
+		if temp_rr ~= nil and temp_rr > 1 and temp_rr < 20 then
+			round_robin_count = math.floor(temp_rr)
+		end
+		if temp_stretch_pol ~= nil and temp_stretch_pol >= 0 and temp_stretch_pol <= 4 then
+			stretch_policy = math.floor(temp_stretch_pol)
+		end
+		if temp_stretch_num == 1 then
+			stretch = true
+		elseif temp_stretch_num == 0 then
+			stretch = false
+		end
+		if temp_stretch == "true" then
+			stretch = true
+		elseif temp_stretch == "false" then
+			stretch = false
+		end
+		if temp_offset ~= nil and temp_offset >= 0 and temp_offset < 127 then
+			offset = math.floor(temp_offset)
+		end
+		if temp_f_layers ~= nil and temp_f_layers >= 0 and temp_f_layers < 127 then
+			f_layer_count = math.floor(temp_f_layers)
+		end
+		if temp_mf_layers ~= nil and temp_mf_layers >= 0 and temp_mf_layers < 127 then
+			mf_layer_count = math.floor(temp_mf_layers)
+		end
+		if temp_mp_layers ~= nil and temp_mp_layers >= 0 and temp_mp_layers < 127 then
+			mp_layer_count = math.floor(temp_mp_layers)
+		end
+		if temp_p_layers ~= nil and temp_p_layers >= 0 and temp_p_layers < 127 then
+			p_layer_count = math.floor(temp_p_layers)
+		end
+		if temp_ff_p ~= nil and temp_ff_p >= 0 and temp_ff_p < 127 then
+			ff_point = math.floor(temp_ff_p)
+		end
+		if temp_f_p ~= nil and temp_f_p >= 0 and temp_f_p < 127 then
+			f_point = math.floor(temp_f_p)
+		end
+		if temp_mf_p ~= nil and temp_mf_p >= 0 and temp_mf_p < 127 then
+			mf_point = math.floor(temp_mf_p)
+		end
+		if temp_mp_p ~= nil and temp_mp_p >= 0 and temp_mp_p < 127 then
+			mp_point = math.floor(temp_mp_p)
+		end
+	end
+	
+	if round_robin_count == 0 then round_robin_count = 1 end
+	
+	number_of_tracks = (p_layer_count + mp_layer_count + mf_layer_count + f_layer_count + ff_layer_count) * round_robin_count
+
+	return mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy, not retval
+end
 
 function contains_dynamic_level_points(input_array, array_length)
 	local count = 0
@@ -433,7 +551,7 @@ function parse_input_command()
 		
 		local number_of_tracks = (p_layer_count + mp_layer_count + mf_layer_count + f_layer_count + ff_layer_count) * round_robin_count
 		
-		return mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy
+		return mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy, input_marker_found
 	else
 		return -1, -1, -1, -1, -1, -1,  -1, -1, -1, "-1", -1, -1, false
 	end
@@ -678,6 +796,12 @@ function seal_off_existing_regions()
 	return regions_exist
 end
 
+---------- memory needed for multi-mic -----------
+mp_point_, mf_point_, f_point_, ff_point_, p_layer_count_, mp_layer_count_, mf_layer_count_, f_layer_count_, ff_layer_count_, articulation_name_, round_robin_count_, number_of_tracks_, no_pitch_, stretch_, stretch_policy_ = nil
+first_mic = true
+cancelled = false
+--------------------------------------------------
+
 function arrange_samples(track_idx)
 
 	local track = reaper.GetTrack(0, track_idx) 
@@ -693,7 +817,17 @@ function arrange_samples(track_idx)
 		local notes = {}
 		local notes_count = 0
 
-		local mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy = parse_input_command()
+		local mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy, input_marker_found = parse_input_command()
+
+		if not input_marker_found and default_open_dialog_box_if_no_marker then
+			if first_mic then
+				first_mic = false
+				mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy, cancelled = get_user_input_via_dialog_box()
+				mp_point_, mf_point_, f_point_, ff_point_, p_layer_count_, mp_layer_count_, mf_layer_count_, f_layer_count_, ff_layer_count_, articulation_name_, round_robin_count_, number_of_tracks_, no_pitch_, stretch_, stretch_policy_ = mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy
+			else
+				mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count, number_of_tracks, no_pitch, stretch, stretch_policy = mp_point_, mf_point_, f_point_, ff_point_, p_layer_count_, mp_layer_count_, mf_layer_count_, f_layer_count_, ff_layer_count_, articulation_name_, round_robin_count_, number_of_tracks_, no_pitch_, stretch_, stretch_policy_
+			end
+		end
 
 		if stretch == true and stretch_policy ~= 4 then
 			lowest_note = 24
@@ -763,16 +897,18 @@ function arrange_samples(track_idx)
 		notes_count = notes_count + 2
 		notes[notes_count] = highest_note
 		
-		-- regions
-		if track_idx == 0 then
-			add_regions_for_notes(notes, notes_count, region_lenght, start_point, stretch_policy)
+		if not cancelled then
+			-- regions
+			if track_idx == 0 then
+				add_regions_for_notes(notes, notes_count, region_lenght, start_point, stretch_policy)
+			end
+			
+			-- tracks
+			create_tracks(mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count)
+			
+			-- move items
+			move_items_to_tracks(number_of_tracks, round_robin_count, no_pitch, track)
 		end
-		
-		-- tracks
-		create_tracks(mp_point, mf_point, f_point, ff_point, p_layer_count, mp_layer_count, mf_layer_count, f_layer_count, ff_layer_count, articulation_name, round_robin_count)
-		
-		-- move items
-		move_items_to_tracks(number_of_tracks, round_robin_count, no_pitch, track)
 	end
 end
 
@@ -841,78 +977,80 @@ function main()
 		local track_idx = track_numbers[i] - 1 -- note: number -> index, thus '-1'
 		arrange_samples(track_idx) 
 	end
-		
-	local item_count = reaper.CountMediaItems(0)
-		
-	for i = 0, item_count - 1, 1 do
-		local temp_item = reaper.GetMediaItem(0, i)
-		local id = reaper.GetMediaItemInfo_Value(temp_item, "I_GROUPID")
-		
-		for j = 1, group_ids_idx, 1 do
-			if id == group_ids[j] then				
-				reaper.SetMediaItemSelected(temp_item, true) -- selected items are ready for rendering/export
-			end
-		end
-	end
 	
-	if track_numbers_idx > 0 then
-		--add mic folder tracks and finalize naming
-		local new_track_count = reaper.CountTracks(0)
-		local num_added_tracks = new_track_count - old_track_count
-		local num_tracks_per_mic = num_added_tracks / track_numbers_idx
-				
-		for i = track_numbers_idx, 1, -1 do
-			reaper.InsertTrackAtIndex(old_track_count, true)
-			local new_track = reaper.GetTrack(0, old_track_count)
-			reaper.GetSetMediaTrackInfo_String(new_track, "P_NAME", "Mic "..tostring(i), true)
-			reaper.SetMediaTrackInfo_Value(new_track, "I_FOLDERDEPTH", 1)
+	if not cancelled then	
+		local item_count = reaper.CountMediaItems(0)
 			
-			for j = reaper.CountTracks(0) - 1, reaper.CountTracks(0) - num_tracks_per_mic, -1 do
-				local temp_tr = reaper.GetTrack(0, j)
-				reaper.SetTrackSelected(temp_tr, true)
-				local retval, old_name = reaper.GetSetMediaTrackInfo_String(temp_tr, "P_NAME", "", false)
-				if reaper.GetMediaTrackInfo_Value(temp_tr, "I_FOLDERDEPTH") == 1 then
-					--
-				else
-					local new_name = ""
-					local mic_string = "Mic"..tostring(i)
-					if track_numbers_idx == 1 then
-						mic_string = "" -- no need for word "Mic"
-					end
-					if string.find(old_name, "RR") ~= nil then
-						new_name = string.gsub(old_name, "RR", mic_string.."RR", 1)
-					else
-						new_name = old_name..mic_string
-					end
-					
-					local space_count = 0
-					for c in string.gmatch(new_name, "%p") do 
-						if c == "_" then
-							space_count = space_count + 1
-						end
-					end
-					
-					local name_info_part = ""
-					if space_count == 2 then
-						local reversed_name = string.reverse(new_name)
-						local separator_idx = string.find(reversed_name, "_")
-						name_info_part = string.sub(new_name, string.len(new_name) - separator_idx + 2)
-						if name_info_part ~= "" and name_info_part ~= nil then
-							new_name = string.gsub(new_name, "_"..name_info_part, "", 1)
-						else
-							new_name = string.sub(new_name, 1, -2)
-						end
-					end
-					
-					reaper.GetSetMediaTrackInfo_String(reaper.GetParentTrack(temp_tr), "P_NAME", name_info_part, true)	
-					reaper.GetSetMediaTrackInfo_String(temp_tr, "P_NAME", new_name, true)
+		for i = 0, item_count - 1, 1 do
+			local temp_item = reaper.GetMediaItem(0, i)
+			local id = reaper.GetMediaItemInfo_Value(temp_item, "I_GROUPID")
+			
+			for j = 1, group_ids_idx, 1 do
+				if id == group_ids[j] then				
+					reaper.SetMediaItemSelected(temp_item, true) -- selected items are ready for rendering/export
 				end
 			end
-			
-			reaper.ReorderSelectedTracks(old_track_count + 1, 1)		
-			reaper.SetMediaTrackInfo_Value(reaper.GetTrack(0, old_track_count + num_tracks_per_mic), "I_FOLDERDEPTH", -2)
-			for j = 0, reaper.CountTracks(0) - 1, 1 do
-				reaper.SetTrackSelected(reaper.GetTrack(0, j), false)
+		end
+		
+		if track_numbers_idx > 0 then
+			--add mic folder tracks and finalize naming
+			local new_track_count = reaper.CountTracks(0)
+			local num_added_tracks = new_track_count - old_track_count
+			local num_tracks_per_mic = num_added_tracks / track_numbers_idx
+					
+			for i = track_numbers_idx, 1, -1 do
+				reaper.InsertTrackAtIndex(old_track_count, true)
+				local new_track = reaper.GetTrack(0, old_track_count)
+				reaper.GetSetMediaTrackInfo_String(new_track, "P_NAME", "Mic "..tostring(i), true)
+				reaper.SetMediaTrackInfo_Value(new_track, "I_FOLDERDEPTH", 1)
+				
+				for j = reaper.CountTracks(0) - 1, reaper.CountTracks(0) - num_tracks_per_mic, -1 do
+					local temp_tr = reaper.GetTrack(0, j)
+					reaper.SetTrackSelected(temp_tr, true)
+					local retval, old_name = reaper.GetSetMediaTrackInfo_String(temp_tr, "P_NAME", "", false)
+					if reaper.GetMediaTrackInfo_Value(temp_tr, "I_FOLDERDEPTH") == 1 then
+						--
+					else
+						local new_name = ""
+						local mic_string = "Mic"..tostring(i)
+						if track_numbers_idx == 1 then
+							mic_string = "" -- no need for word "Mic"
+						end
+						if string.find(old_name, "RR") ~= nil then
+							new_name = string.gsub(old_name, "RR", mic_string.."RR", 1)
+						else
+							new_name = old_name..mic_string
+						end
+						
+						local space_count = 0
+						for c in string.gmatch(new_name, "%p") do 
+							if c == "_" then
+								space_count = space_count + 1
+							end
+						end
+						
+						local name_info_part = ""
+						if space_count == 2 then
+							local reversed_name = string.reverse(new_name)
+							local separator_idx = string.find(reversed_name, "_")
+							name_info_part = string.sub(new_name, string.len(new_name) - separator_idx + 2)
+							if name_info_part ~= "" and name_info_part ~= nil then
+								new_name = string.gsub(new_name, "_"..name_info_part, "", 1)
+							else
+								new_name = string.sub(new_name, 1, -2)
+							end
+						end
+						
+						reaper.GetSetMediaTrackInfo_String(reaper.GetParentTrack(temp_tr), "P_NAME", name_info_part, true)	
+						reaper.GetSetMediaTrackInfo_String(temp_tr, "P_NAME", new_name, true)
+					end
+				end
+				
+				reaper.ReorderSelectedTracks(old_track_count + 1, 1)		
+				reaper.SetMediaTrackInfo_Value(reaper.GetTrack(0, old_track_count + num_tracks_per_mic), "I_FOLDERDEPTH", -2)
+				for j = 0, reaper.CountTracks(0) - 1, 1 do
+					reaper.SetTrackSelected(reaper.GetTrack(0, j), false)
+				end
 			end
 		end
 	end
