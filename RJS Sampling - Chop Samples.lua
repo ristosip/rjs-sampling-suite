@@ -477,7 +477,7 @@ function main()
 
 		for i = num_of_items - 1, 0, -1 do
 			
-			local original_item_identifier = (i + 1) * 1000		
+			local original_item_identifier = (i + 1) * 10000		
 			local item = reaper.GetTrackMediaItem(track, i)
 			local take = reaper.GetTake(item, 0)
 			local source = reaper.GetMediaItemTake_Source(take)
