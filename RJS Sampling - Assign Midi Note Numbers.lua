@@ -56,7 +56,7 @@ end
 function main()
 	local itemCount = reaper.CountTrackMediaItems(reaper.GetTrack(0, 0))
 	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
-	local midi_note = 36
+	local midi_note = 1
 	
 	if itemCount > 0 then
 		for i = 0, itemCount - 1, 1 do
@@ -74,11 +74,11 @@ function main()
 					end
 					if identifier_found then
 						for word in string.gmatch(name, "%d+") do 
-							if tonumber(word) >= 24 and tonumber(word) <= 108 then
+							if tonumber(word) >= 1 and tonumber(word) <= 127 then
 								midi_note = tonumber(word)
 								break;
 							else
-								midi_note = 36
+								midi_note = 1
 								break;
 							end
 						end
