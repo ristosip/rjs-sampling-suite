@@ -84,7 +84,7 @@ function main()
 						end
 						break;
 					else
-						midi_note = 36
+						midi_note = 1
 					end
 				end
 			end			
