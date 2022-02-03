@@ -56,7 +56,7 @@ end
 function main()
 	local itemCount = reaper.CountTrackMediaItems(reaper.GetTrack(0, 0))
 	local retval, num_markers, num_regions = reaper.CountProjectMarkers(0)
-	local midi_note = 1
+	local midi_note = 0
 	
 	if itemCount > 0 then
 		for i = 0, itemCount - 1, 1 do
@@ -78,13 +78,13 @@ function main()
 								midi_note = tonumber(word)
 								break;
 							else
-								midi_note = 1
+								midi_note = 0
 								break;
 							end
 						end
 						break;
 					else
-						midi_note = 1
+						midi_note = 0
 					end
 				end
 			end			
