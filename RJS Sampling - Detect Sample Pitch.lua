@@ -126,7 +126,7 @@ function measure_pitch(input_buf, buf_size, samplerate)
 	-- remove center peak from the search
 	local first_minimum_idx = 1 + buf_size - 1
 	
-	while first_minimum_idx < buf_size * 2 -1 do
+	while first_minimum_idx < buf_size * 2 - 2 do
 	
 		first_minimum_idx = first_minimum_idx + 1
 	
