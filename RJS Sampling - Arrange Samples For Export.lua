@@ -5,10 +5,10 @@
 -- 'RJS Sampling Suite' script collection is licensed under the GNU General Public License v3.0: See LICENSE.txt
 --
 -- How to use: 
---             1. Preparation: The (main mic) samples are labeled and lined up on the first track, ideally, after running 'Chop Samples' and 'Detect Sample Pitch' or 'Assign Percussion Keys'.
---             2. Create a timeline marker that serves as an input command for the script. (See details below.)
---             3. Run the script.
---             4. The samples are now arranged and ready for export. Open Reaper's 'Render' dialog and type in appropriate settings. Render.
+--             1.  Preparation: The (main mic) samples are labeled and lined up on the first track, ideally, after running 'Chop Samples' and 'Detect Sample Pitch' or 'Assign Percussion Keys'.
+--             2a. Run the script. Give command parameters via the dialog box that opens.
+--             (2b. Alternative old way of working: Create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
+--             3. The samples are now arranged and ready for export. Open Reaper's 'Render' dialog and type in appropriate settings. Render.
 --
 -- Preparation details:
 --             - The script assumes that the samples on the first track are ordered so that round robin samples are next to each other and velocity layers go from low to high.

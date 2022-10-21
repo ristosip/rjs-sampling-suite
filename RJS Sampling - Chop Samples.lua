@@ -7,8 +7,9 @@
 -- How to use: 
 --             1. Place the source item on the first track of the project. 
 --             2. Align and group the other source items on separate tracks if you have a multi mic recording.
---             3. If needed, create a timeline marker that serves as an input command for the script. (See details below.)
---             4. Run the script.
+--             3a. Run the script. Give command parameters via the dialog box that opens. The default settings usually work well.
+--             (3b. Alternative old way of working: If needed, create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
+--             
 -- 
 -- Input Command:
 --             'chop [minimum sample length (ms)] [leading pad lenght (ms)] [start point detection sensitivity mode (1-3 + noisy modes)] [end point detection accuracy mode (1-3)] [show what is cut (1 or 0)] [fade out length (ms)] [fade in length (ms)]'
