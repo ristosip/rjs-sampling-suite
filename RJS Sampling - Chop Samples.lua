@@ -7,8 +7,8 @@
 -- How to use: 
 --             1. Place the source item on the first track of the project. 
 --             2. Align and group the other source items on separate tracks if you have a multi mic recording.
---             3a. Run the script. Give command parameters via the dialog box that opens. The default settings usually work well.
---             (3b. Alternative old way of working: If needed, create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
+--             3a. Run the script. Give command parameters via the dialog box that opens. The default settings usually work well. (The default settings can be customized.)
+--             (3b. The alternative old way of working: If needed, create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
 --             
 -- 
 -- Input Command:

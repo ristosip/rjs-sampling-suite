@@ -6,8 +6,8 @@
 --
 -- How to use: 
 --             1.  Preparation: The (main mic) samples are labeled and lined up on the first track, ideally, after running 'Chop Samples' and 'Detect Sample Pitch' or 'Assign Percussion Keys'.
---             2a. Run the script. Give command parameters via the dialog box that opens.
---             (2b. Alternative old way of working: Create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
+--             2a. Run the script. Give command parameters via the dialog box that opens. (Change the default settings below if you need an advanced dialog, or other customization.)
+--             (2b. The alternative old way of working: Create a timeline marker that serves as an input command for the script. (See details below.) Run the script.)
 --             3. The samples are now arranged and ready for export. Open Reaper's 'Render' dialog and type in appropriate settings. Render.
 --
 -- Preparation details:
