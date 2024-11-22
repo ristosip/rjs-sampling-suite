@@ -169,7 +169,7 @@ function sort_items_by_note_and_signal_energy()
 					original_index[max_swap_idx] = original_index[i]
 					original_index[i] = temp_2
 				end
-				for j = i + 1, itemCount - i + 1, 1 do
+				for j = i, itemCount - i + 1, 1 do
 					if itemNoteValues[original_index[itemCount - j + 1]] < min then
 						min_swap_idx = itemCount - j + 1
 						min = itemNoteValues[original_index[itemCount - j + 1]]
@@ -190,12 +190,11 @@ function sort_items_by_note_and_signal_energy()
 		
 		-- sort items by signal energy values
 		
-		if energy_detection_mode ~= 3 then -- mode 4 and 5 ---> ignore energy values.
+		if energy_detection_mode ~= 3 then -- mode 3 ---> ignore energy values.
 		
 			local note_number_occurrence = {}
 			note_number_occurrence[1] = 0
 			local occurrence_list_idx = 0
-			local counter = 0
 			local current_number = -1
 			
 			for i = 1, itemCount, 1 do
@@ -238,7 +237,7 @@ function sort_items_by_note_and_signal_energy()
 						original_index[max_swap_idx] = original_index[i + i_offset]
 						original_index[i + i_offset] = temp_2
 					end
-					for j = i + 1, itemCount_ - i + 1, 1 do
+					for j = i, itemCount_ - i + 1, 1 do
 						if itemEnergyValues[original_index[itemCount_ - j + 1 + i_offset]] < min then
 							min_swap_idx = itemCount_ - j + 1 + i_offset
 							min = itemEnergyValues[original_index[itemCount_ - j + 1 + i_offset]]
